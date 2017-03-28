@@ -1,0 +1,64 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+typedef struct binaryTree
+{
+  int data;
+  struct binaryTree *left;
+  struct binaryTree *right;
+}binaryTree;
+
+binaryTree * createTree(int num)
+{
+  binaryTree *btemp=(btemp*)malloc(sizeof btemp);
+  if(btemp==NULL)
+  {
+     printf("No memory allocated");
+     exit(1);
+  }
+  btemp->data=num;
+  btemp->left=NULL;
+  btemp->right=NULL;
+  return btemp;
+}
+binaryTree * addNode(binaryTree *root, int num)
+{
+   binaryTree *temp,*curr;
+   if(root==NULL)
+   {
+     root=createTree(num);
+     return root;
+   }
+
+   curr=root;
+   while(curr!=NULL)
+   {
+     if((curr->data)>num)
+       curr=curr->left;
+     else
+       curr=curr->right;
+   }
+   curr=createTree(num);
+   return root;
+}
+void display(binaryTree *root)
+{
+  binaryTree *curr=root;
+
+  printf("%d ",curr->data);
+  display(curr->left);
+  display(curr->right);
+  
+}
+int main()
+{
+  binaryTree *b1;
+  b1=createTree(4);
+  b1=addNode(b1,5);
+  b1=addNode(b1,7);
+  b1=addNode(b1,2);
+  b1=addNode(b1,9);
+  b1=addNode(b1,1);
+  
+  display(b1);
+}
