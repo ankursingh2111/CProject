@@ -21,6 +21,66 @@ binaryTree * createTree(int num)
   btemp->right=NULL;
   return btemp;
 }
+typedef struct stackTree
+{
+int top;
+int size;
+binaryTree ** btree;
+}stackTree;
+
+stackTree * createStack(int size)
+{
+ stackTree *stree=(stackTree*)malloc(sizeof(stackTree));
+ if(stree==NULL)
+ {
+     printf("No memory allocated");
+     exit(1);
+ }
+ stree->top=0;
+ stree->size=size;
+ stree->btree=(binaryTree**)malloc(size*sizeof(binaryTree));
+
+ int i;
+ for (i = 0; i < size; ++i)
+      stree->btree[i] = NULL;
+
+ return stree;
+ 
+
+}
+void stackPush(stackTree *stree, binaryTree *btree)
+{
+  if(stree->top==stree->size)
+  {
+     printf("Stack is full");
+     exit(1);
+  }
+  stree->btree[(stree->top)++]=btree;
+}
+binaryTree * stackPop(stackTree *stree)
+{
+  if(stree->top==0)
+  {
+    printf("Stack is empty");
+    exit(1);
+  }
+  return stree->btree[--(stree->top)];
+}
+int isStackEmpty(stackTree *stree)
+{
+  if(stree->top==0)
+    return 0;
+}
+void DeleteStack(stackTree *stree)
+{
+   int i=0;
+
+   for(i=0;i<stree->size;i++)
+   {
+      free(stree->btree[i]);
+   }
+   free(stree);
+}
 binaryTree * addNode(binaryTree *root, int num)
 {
    binaryTree *prev,*curr;
@@ -53,30 +113,80 @@ binaryTree * addNode(binaryTree *root, int num)
 
    return root;
 }
-void display(binaryTree *curr)
+void Preorder(binaryTree *curr)
 {
   if(curr)
   {
     printf("%d ",curr->data);
-    display(curr->left);
-    display(curr->right);
+    Preorder(curr->left);
+    Preorder(curr->right);
  } 
 }
-void display1(binaryTree *curr)
+int PreorderItr(binaryTree *temp)
+{
+    binaryTree *curr=temp;
+    if(curr==NULL)
+      return 0;
+    stackTree *currStack=createStack(10);
+   
+    while(1)
+    {
+       while(curr!=NULL)
+       { 
+         printf("%d ", curr->data);
+         stackPush(currStack,curr); 
+         
+         curr=curr->left;
+       }
+       if(!isStackEmpty(currStack))
+          break;
+       curr=stackPop(currStack);
+       curr=curr->right;
+
+    }
+   //DeleteStack(currStack);
+        
+}
+void Inorder(binaryTree *curr)
 {
   if(curr)
   {
-    display1(curr->left);
+    Inorder(curr->left);
     printf("%d ",curr->data);
-    display1(curr->right);
+    Inorder(curr->right);
  } 
 }
-void display2(binaryTree *curr)
+int InorderItr(binaryTree *curr)
+{
+    if(curr==NULL)
+      return 0;
+
+    stackTree *currStack=createStack(10);
+
+    while(1)
+    {
+       while(curr!=NULL)
+       {
+         stackPush(currStack,curr);
+
+         curr=curr->left;
+       }
+       if(!isStackEmpty(currStack))
+          break;
+       curr=stackPop(currStack);
+       printf("%d ", curr->data);
+       curr=curr->right;
+
+    }
+    DeleteStack(currStack);
+
+}
+void Postorder(binaryTree *curr)
 {
   if(curr)
   {
-    display2(curr->left);
-    display2(curr->right);
+    Postorder(curr->left);
+    Postorder(curr->right);
     printf("%d ",curr->data);
  } 
 }
@@ -90,9 +200,13 @@ int main()
   b1=addNode(b1,9);
   b1=addNode(b1,1);
   
-  display(b1);
+  Preorder(b1);
   printf("\n");
-  display1(b1);
+  Inorder(b1);
   printf("\n");
-  display2(b1);
+  Postorder(b1);
+  printf("\n");
+  PreorderItr(b1);
+  printf("\n");
+  InorderItr(b1);
 }
